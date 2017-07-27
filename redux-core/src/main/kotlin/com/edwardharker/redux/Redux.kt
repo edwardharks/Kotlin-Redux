@@ -6,13 +6,26 @@ interface Action
 
 interface State
 
-class Store<out S : State>(private val reducer: (S, Action) -> S, private val initialState: S) {
+interface Store<out S : State> {
+
+    fun dispatch(action: Action)
+
+    fun subscribe(listener: (S) -> Unit): () -> Unit
+
+    fun getState(): S
+
+    companion object {
+        fun <S : State> create(reducer: (S, Action) -> S, initialState: S): Store<S> = DefaultStore(reducer, initialState)
+    }
+}
+
+class DefaultStore<out S : State>(private val reducer: (S, Action) -> S, private val initialState: S) : Store<S> {
 
     private val listeners = HashSet<(S) -> Unit>()
 
     private var state: S = initialState
 
-    fun dispatch(action: Action) {
+    override fun dispatch(action: Action) {
         state = reducer(initialState, action)
 
         for (listener in listeners) {
@@ -20,7 +33,7 @@ class Store<out S : State>(private val reducer: (S, Action) -> S, private val in
         }
     }
 
-    fun subscribe(listener: (S) -> Unit): () -> Unit {
+    override fun subscribe(listener: (S) -> Unit): () -> Unit {
         listeners.add(listener)
 
         val unsubscriber = fun() {
@@ -30,5 +43,5 @@ class Store<out S : State>(private val reducer: (S, Action) -> S, private val in
         return unsubscriber
     }
 
-    fun getState(): S = state
+    override fun getState(): S = state
 }

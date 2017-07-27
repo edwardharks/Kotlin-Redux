@@ -4,7 +4,7 @@ import org.hamcrest.CoreMatchers.equalTo
 import org.junit.Assert.assertThat
 import org.junit.Test
 
-class StoreTest {
+class DefaultStoreTest {
 
     @Test
     fun dispatchActionProvidesActionToReducer() {
@@ -15,7 +15,7 @@ class StoreTest {
             return state
         }
 
-        val store = Store(reducer, FakeState())
+        val store = DefaultStore(reducer, FakeState())
 
         store.dispatch(FakeAction)
         assertThat(reducedAction, equalTo(FakeAction as Action))
@@ -25,13 +25,13 @@ class StoreTest {
     fun dispatchActionProvidesInitialStateToReducer() {
         var oldState: State? = null
 
-        val reducer = fun(state: FakeState, action: Action): FakeState {
+        val reducer = fun(state: FakeState, action: Action): FakeState {8
             oldState = state
             return state
         }
 
         val expected = FakeState()
-        val store = Store(reducer, expected)
+        val store = DefaultStore(reducer, expected)
         store.dispatch(FakeAction)
         assertThat(oldState, equalTo(expected as State))
     }
@@ -41,7 +41,7 @@ class StoreTest {
         val reducer = fun(state: FakeState, action: Action) = state
 
         val expected = object : FakeState() {}
-        val store = Store(reducer, expected)
+        val store = DefaultStore(reducer, expected)
 
         var observedState: FakeState? = null
         store.subscribe { state -> observedState = state }
@@ -55,7 +55,7 @@ class StoreTest {
         val expected = object : FakeState() {}
 
         val reducer = fun(state: FakeState, action: Action) = expected
-        val store = Store(reducer, FakeState())
+        val store = DefaultStore(reducer, FakeState())
 
         store.dispatch(FakeAction)
         assertThat(store.getState(), equalTo(expected as FakeState))
