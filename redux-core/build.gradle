@@ -1,17 +1,6 @@
 group 'com.edwardharker.redux'
 version '1.0-SNAPSHOT'
 
-buildscript {
-    ext.kotlin_version = '1.0.3'
-
-    repositories {
-        mavenCentral()
-    }
-    dependencies {
-        classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlin_version"
-    }
-}
-
 apply plugin: 'kotlin'
 
 repositories {
@@ -20,4 +9,5 @@ repositories {
 
 dependencies {
     compile "org.jetbrains.kotlin:kotlin-stdlib:$kotlin_version"
+    testCompile 'junit:junit:4.12'
 }
