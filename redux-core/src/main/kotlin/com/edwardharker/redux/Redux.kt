@@ -17,12 +17,21 @@ interface Store<out S : State> {
 
 class DefaultStore<out S : State>(private val reducer: (S, Action) -> S, private val initialState: S) : Store<S> {
 
-    private val listeners = HashSet<(S) -> Unit>()
-
     private var state: S = initialState
+    private val listeners = HashSet<(S) -> Unit>()
+    private var isDispatching = false
 
     override fun dispatch(action: Action) {
-        state = reducer(state, action)
+        if (isDispatching) {
+            throw IllegalStateException("Reducers may not dispatch actions.")
+        }
+
+        try {
+            isDispatching = true
+            state = reducer(state, action)
+        } finally {
+            isDispatching = false
+        }
 
         for (listener in listeners) {
             listener(state)
