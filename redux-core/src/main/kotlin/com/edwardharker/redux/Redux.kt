@@ -13,10 +13,6 @@ interface Store<out S : State> {
     fun subscribe(listener: (S) -> Unit): () -> Unit
 
     fun getState(): S
-
-    companion object {
-        fun <S : State> create(reducer: (S, Action) -> S, initialState: S): Store<S> = DefaultStore(reducer, initialState)
-    }
 }
 
 class DefaultStore<out S : State>(private val reducer: (S, Action) -> S, private val initialState: S) : Store<S> {
@@ -26,7 +22,7 @@ class DefaultStore<out S : State>(private val reducer: (S, Action) -> S, private
     private var state: S = initialState
 
     override fun dispatch(action: Action) {
-        state = reducer(initialState, action)
+        state = reducer(state, action)
 
         for (listener in listeners) {
             listener(state)
@@ -44,4 +40,37 @@ class DefaultStore<out S : State>(private val reducer: (S, Action) -> S, private
     }
 
     override fun getState(): S = state
+
+    companion object {
+        fun <S : State> create(reducer: (S, Action) -> S, initialState: S): Store<S> = DefaultStore(reducer, initialState)
+    }
+}
+
+class ThreadSafeStore<out S : State>(reducer: (S, Action) -> S, initialState: S) : Store<S> {
+
+    private val defaultStore = DefaultStore(reducer, initialState)
+
+    private val lock = Object()
+
+    override fun dispatch(action: Action) {
+        synchronized(lock) {
+            defaultStore.dispatch(action)
+        }
+    }
+
+    override fun subscribe(listener: (S) -> Unit): () -> Unit {
+        synchronized(lock) {
+            return defaultStore.subscribe(listener)
+        }
+    }
+
+    override fun getState(): S {
+        synchronized(lock) {
+            return defaultStore.getState()
+        }
+    }
+
+    companion object {
+        fun <S : State> create(reducer: (S, Action) -> S, initialState: S): Store<S> = ThreadSafeStore(reducer, initialState)
+    }
 }

@@ -6,14 +6,14 @@ import io.reactivex.BackpressureStrategy
 
 class RxStore<out S : State>(reducer: (S, Action) -> S, initialState: S) : Store<S> {
 
-    private val defaultStore = DefaultStore(reducer, initialState)
+    private val store = ThreadSafeStore(reducer, initialState)
 
     override fun dispatch(action: Action) {
-        defaultStore.dispatch(action)
+        store.dispatch(action)
     }
 
     override fun subscribe(listener: (S) -> Unit): () -> Unit {
-        return defaultStore.subscribe(listener)
+        return store.subscribe(listener)
     }
 
     fun asObservable(): Flowable<out S> = Flowable.create({ emitter ->
@@ -22,7 +22,7 @@ class RxStore<out S : State>(reducer: (S, Action) -> S, initialState: S) : Store
     }, BackpressureStrategy.BUFFER)
 
     override fun getState(): S {
-        return defaultStore.getState()
+        return store.getState()
     }
 
     companion object {
