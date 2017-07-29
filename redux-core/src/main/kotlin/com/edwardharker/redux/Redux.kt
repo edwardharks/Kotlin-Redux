@@ -4,9 +4,7 @@ import java.util.*
 
 interface Action
 
-interface State
-
-interface Store<out S : State> {
+interface Store<out S> {
 
     fun dispatch(action: Action)
 
@@ -15,7 +13,7 @@ interface Store<out S : State> {
     fun getState(): S
 }
 
-class DefaultStore<out S : State>(private val reducer: (S, Action) -> S, private val initialState: S) : Store<S> {
+class DefaultStore<out S>(private val reducer: (S, Action) -> S, private val initialState: S) : Store<S> {
 
     private var state: S = initialState
     private val listeners = HashSet<(S) -> Unit>()
@@ -51,11 +49,11 @@ class DefaultStore<out S : State>(private val reducer: (S, Action) -> S, private
     override fun getState(): S = state
 
     companion object {
-        fun <S : State> create(reducer: (S, Action) -> S, initialState: S): Store<S> = DefaultStore(reducer, initialState)
+        fun <S> create(reducer: (S, Action) -> S, initialState: S): Store<S> = DefaultStore(reducer, initialState)
     }
 }
 
-class ThreadSafeStore<out S : State>(reducer: (S, Action) -> S, initialState: S) : Store<S> {
+class ThreadSafeStore<out S>(reducer: (S, Action) -> S, initialState: S) : Store<S> {
 
     private val defaultStore = DefaultStore(reducer, initialState)
 
@@ -80,6 +78,6 @@ class ThreadSafeStore<out S : State>(reducer: (S, Action) -> S, initialState: S)
     }
 
     companion object {
-        fun <S : State> create(reducer: (S, Action) -> S, initialState: S): Store<S> = ThreadSafeStore(reducer, initialState)
+        fun <S> create(reducer: (S, Action) -> S, initialState: S): Store<S> = ThreadSafeStore(reducer, initialState)
     }
 }

@@ -4,7 +4,7 @@ import io.reactivex.Flowable
 import io.reactivex.BackpressureStrategy
 
 
-class RxStore<out S : State>(reducer: (S, Action) -> S, initialState: S) : Store<S> {
+class RxStore<out S>(reducer: (S, Action) -> S, initialState: S) : Store<S> {
 
     private val store = ThreadSafeStore(reducer, initialState)
 
@@ -26,6 +26,6 @@ class RxStore<out S : State>(reducer: (S, Action) -> S, initialState: S) : Store
     }
 
     companion object {
-        fun <S : State> create(reducer: (S, Action) -> S, initialState: S): RxStore<S> = RxStore(reducer, initialState)
+        fun <S> create(reducer: (S, Action) -> S, initialState: S): RxStore<S> = RxStore(reducer, initialState)
     }
 }
