@@ -1,4 +1,5 @@
 rootProject.name = 'redux'
 include 'redux-core'
 include 'redux-rx'
+include ':demo'
 

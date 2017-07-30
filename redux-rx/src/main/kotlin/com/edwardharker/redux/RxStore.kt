@@ -3,7 +3,6 @@ package com.edwardharker.redux
 import io.reactivex.Flowable
 import io.reactivex.BackpressureStrategy
 
-
 class RxStore<out S>(reducer: (S, Action) -> S, initialState: S) : Store<S> {
 
     private val store = ThreadSafeStore(reducer, initialState)

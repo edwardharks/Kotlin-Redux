@@ -13,7 +13,7 @@ interface Store<out S> {
     fun getState(): S
 }
 
-class DefaultStore<out S>(private val reducer: (S, Action) -> S, private val initialState: S) : Store<S> {
+class DefaultStore<out S>(private val reducer: (S, Action) -> S, initialState: S) : Store<S> {
 
     private var state: S = initialState
     private val listeners = HashSet<(S) -> Unit>()
