@@ -38,6 +38,7 @@ class DefaultStore<out S>(private val reducer: (S, Action) -> S, initialState: S
 
     override fun subscribe(listener: (S) -> Unit): () -> Unit {
         listeners.add(listener)
+        listener(state)
 
         val unsubscriber = fun() {
             listeners.remove(listener)
