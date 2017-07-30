@@ -7,11 +7,17 @@ repositories {
 
 dependencies {
     compile project(":redux-core")
+    compile project(":redux-rx")
     compile "org.jetbrains.kotlin:kotlin-stdlib:$kotlin_version"
     testCompile 'junit:junit:4.12'
 }
 
-task runDemo(type: JavaExec) {
+task reduxDemo(type: JavaExec) {
     main = 'com.edwardharker.redux.demo.ReduxDemo'
+    classpath = sourceSets.main.runtimeClasspath
+}
+
+task rxReduxDemo(type: JavaExec) {
+    main = 'com.edwardharker.redux.demo.RxReduxDemo'
     classpath = sourceSets.main.runtimeClasspath
 }

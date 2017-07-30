@@ -1,14 +1,14 @@
-@file:JvmName("ReduxDemo")
+@file:JvmName("RxReduxDemo")
 
 package com.edwardharker.redux.demo
 
-import com.edwardharker.redux.DefaultStore
+import com.edwardharker.redux.RxStore
 
 
 fun main(args: Array<String>) {
-    val store = DefaultStore.create(::reduce, emptyList())
+    val store = RxStore.create(::reduce, emptyList())
 
-    val unsubscribe = store.subscribe { println(it) }
+    val disposable = store.asObservable().subscribe { println(it) }
 
     val todo1 = Todo(1, "Make a redux demo")
     val addTodo1 = AddTodoAction(todo1)
@@ -36,11 +36,11 @@ fun main(args: Array<String>) {
     println("dispatching: $removeTodo2")
     store.dispatch(removeTodo2)
 
-    unsubscribe()
+    disposable.dispose()
 
     println("dispatching: $addTodo2")
     store.dispatch(addTodo2)
 
-    val unsubscribe2 = store.subscribe { println(it) }
-    unsubscribe2()
+    val disposable2 = store.asObservable().subscribe { println(it) }
+    disposable2.dispose()
 }
