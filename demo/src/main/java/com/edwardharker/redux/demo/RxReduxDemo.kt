@@ -2,14 +2,21 @@
 
 package com.edwardharker.redux.demo
 
+import com.edwardharker.redux.Action
 import com.edwardharker.redux.Store
 import com.edwardharker.redux.asObservable
+import com.edwardharker.redux.dispatch
+import io.reactivex.BackpressureStrategy.*
+import io.reactivex.subjects.PublishSubject
 
 
 fun main(args: Array<String>) {
     val store = Store.create(::reduce, emptyList())
 
-    val disposable = store.asObservable().subscribe { println(it) }
+    val observerDisposable = store.asObservable().subscribe { println(it) }
+
+    val dispatchSubject = PublishSubject.create<Action>()
+    val dispatcherDisposable = store.dispatch(dispatchSubject.toFlowable(ERROR))
 
     val todo1 = Todo(1, "Make a redux demo")
     val addTodo1 = AddTodoAction(todo1)
@@ -20,28 +27,30 @@ fun main(args: Array<String>) {
     val removeTodo2 = RemoveTodoAction(todo2)
 
     println("dispatching: $addTodo1")
-    store.dispatch(addTodo1)
+    dispatchSubject.onNext(addTodo1)
 
     println("dispatching: $removeTodo1")
-    store.dispatch(removeTodo1)
+    dispatchSubject.onNext(removeTodo1)
 
     println("dispatching: $addTodo2")
-    store.dispatch(addTodo2)
+    dispatchSubject.onNext(addTodo2)
 
     println("dispatching: $addTodo1")
-    store.dispatch(addTodo1)
+    dispatchSubject.onNext(addTodo1)
 
     println("dispatching: $removeTodo1")
-    store.dispatch(removeTodo1)
+    dispatchSubject.onNext(removeTodo1)
 
     println("dispatching: $removeTodo2")
-    store.dispatch(removeTodo2)
+    dispatchSubject.onNext(removeTodo2)
 
-    disposable.dispose()
+    observerDisposable.dispose()
 
     println("dispatching: $addTodo2")
-    store.dispatch(addTodo2)
+    dispatchSubject.onNext(addTodo2)
 
     val disposable2 = store.asObservable().subscribe { println(it) }
     disposable2.dispose()
+
+    dispatcherDisposable.dispose()
 }

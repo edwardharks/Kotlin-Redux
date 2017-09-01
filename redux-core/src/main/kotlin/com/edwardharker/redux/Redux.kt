@@ -4,6 +4,8 @@ import java.util.*
 
 interface Action
 
+typealias Unsubscriber = () -> Unit
+
 class Store<S>(private val reducer: (S, Action) -> S, initialState: S) {
 
     var state: S = initialState
@@ -11,7 +13,6 @@ class Store<S>(private val reducer: (S, Action) -> S, initialState: S) {
     private val listeners = HashSet<(S) -> Unit>()
     private var isDispatching = false
     private val lock = Object()
-
 
     fun dispatch(action: Action) {
         synchronized(lock) {
@@ -33,7 +34,7 @@ class Store<S>(private val reducer: (S, Action) -> S, initialState: S) {
     }
 
 
-    fun subscribe(listener: (S) -> Unit): () -> Unit {
+    fun subscribe(listener: (S) -> Unit): Unsubscriber {
         listeners.add(listener)
         listener(state)
 
