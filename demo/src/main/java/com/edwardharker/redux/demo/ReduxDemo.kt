@@ -2,11 +2,10 @@
 
 package com.edwardharker.redux.demo
 
-import com.edwardharker.redux.DefaultStore
-
+import com.edwardharker.redux.Store
 
 fun main(args: Array<String>) {
-    val store = DefaultStore.create(::reduce, emptyList())
+    val store = Store.create(::reduce, emptyList())
 
     val unsubscribe = store.subscribe { println(it) }
 

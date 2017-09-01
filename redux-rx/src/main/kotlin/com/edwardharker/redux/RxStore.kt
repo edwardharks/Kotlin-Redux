@@ -1,30 +1,12 @@
 package com.edwardharker.redux
 
-import io.reactivex.Flowable
 import io.reactivex.BackpressureStrategy
+import io.reactivex.Flowable
+import io.reactivex.disposables.Disposable
 
-class RxStore<out S>(reducer: (S, Action) -> S, initialState: S) : Store<S> {
+fun <S> Store<S>.dispatch(actions: Flowable<out Action>): Disposable = actions.subscribe { dispatch(it) }
 
-    private val store = ThreadSafeStore(reducer, initialState)
-
-    override fun dispatch(action: Action) {
-        store.dispatch(action)
-    }
-
-    override fun subscribe(listener: (S) -> Unit): () -> Unit {
-        return store.subscribe(listener)
-    }
-
-    fun asObservable(): Flowable<out S> = Flowable.create({ emitter ->
-        val unsubscriber = subscribe { emitter.onNext(it) }
-        emitter.setCancellable(unsubscriber)
-    }, BackpressureStrategy.BUFFER)
-
-    override fun getState(): S {
-        return store.getState()
-    }
-
-    companion object {
-        fun <S> create(reducer: (S, Action) -> S, initialState: S): RxStore<S> = RxStore(reducer, initialState)
-    }
-}
+fun <S> Store<S>.asObservable(): Flowable<out S> = Flowable.create({ emitter ->
+    val unsubscriber = subscribe { emitter.onNext(it) }
+    emitter.setCancellable(unsubscriber)
+}, BackpressureStrategy.BUFFER)

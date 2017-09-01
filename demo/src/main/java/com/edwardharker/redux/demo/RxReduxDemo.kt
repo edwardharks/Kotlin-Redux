@@ -2,11 +2,12 @@
 
 package com.edwardharker.redux.demo
 
-import com.edwardharker.redux.RxStore
+import com.edwardharker.redux.Store
+import com.edwardharker.redux.asObservable
 
 
 fun main(args: Array<String>) {
-    val store = RxStore.create(::reduce, emptyList())
+    val store = Store.create(::reduce, emptyList())
 
     val disposable = store.asObservable().subscribe { println(it) }
 
