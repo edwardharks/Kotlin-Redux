@@ -11,13 +11,3 @@ dependencies {
     compile "org.jetbrains.kotlin:kotlin-stdlib:$kotlin_version"
     testCompile 'junit:junit:4.12'
 }
-
-task reduxDemo(type: JavaExec) {
-    main = 'com.edwardharker.redux.demo.ReduxDemo'
-    classpath = sourceSets.main.runtimeClasspath
-}
-
-task rxReduxDemo(type: JavaExec) {
-    main = 'com.edwardharker.redux.demo.RxReduxDemo'
-    classpath = sourceSets.main.runtimeClasspath
-}

@@ -54,7 +54,7 @@ class StoreTest {
     }
 
     @Test
-    fun `get state returns current state`() {
+    fun getStateReturnsCurrentState() {
         val expected = object : FakeState() {}
 
         val reducer = fun(_: FakeState, _: Action) = expected

@@ -7,7 +7,7 @@ import com.edwardharker.redux.Store
 fun main(args: Array<String>) {
     val store = Store.create(::reduce, emptyList())
 
-    val unsubscribe = store.subscribe { println(it) }
+    val unsubscribe = store.subscribe { todos -> println(todos) }
 
     val todo1 = Todo(1, "Make a redux demo")
     val addTodo1 = AddTodoAction(todo1)
